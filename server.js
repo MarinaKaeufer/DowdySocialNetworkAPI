@@ -19,6 +19,25 @@ mongoose.connect(
 
 mongoose.set('debug', true);
 
+// Create new user
+app.post('/user', ({ body }, res) => {
+  db.User.create(body)
+  .then(user => res.json(user))
+  .catch(error => res.json(error));
+});
+
+// Get all users
+app.get('/user', (req, res) => {
+  db.User.find({})
+  .then(user => {
+    res.json(user);
+  })
+  .catch(error => {
+    res.json(error);
+  });
+
+})
+
 // A user has been created already for our activity purposes
 // db.User.create({ name: 'Ernest Hemingway' })
 //   .then(dbUser => {
