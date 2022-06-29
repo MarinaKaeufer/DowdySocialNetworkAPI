@@ -35,7 +35,26 @@ app.get('/user', (req, res) => {
   .catch(error => {
     res.json(error);
   });
+})
 
+// Get single user
+app.get('/user/:id', ({params}, res) => {
+  db.User.findOne({ _id: params.id })
+  .populate([
+      { path: 'thoughts', select: "-__v" }, // TODO
+      { path: 'friends', select: "-__v" }
+  ])
+  .select('-__v')
+  .then(user => {
+      if (!user) {
+          res.json({message: 'Sorry, no user found.'});
+          return;
+      }
+      res.json(user);
+  })
+  .catch(error => {
+      res.json(error);
+  });
 })
 
 // A user has been created already for our activity purposes
