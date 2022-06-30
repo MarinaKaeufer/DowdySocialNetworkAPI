@@ -20,25 +20,25 @@ mongoose.connect(
 mongoose.set('debug', true);
 
 // Create new user
-app.post('/user', ({ body }, res) => {
+app.post('/user', ({ body }, response) => {
   db.User.create(body)
-  .then(user => res.json(user))
-  .catch(error => res.json(error));
+  .then(user => response.json(user))
+  .catch(error => response.json(error));
 });
 
 // Get all users
-app.get('/user', (req, res) => {
+app.get('/user', (request, response) => {
   db.User.find({})
   .then(user => {
-    res.json(user);
+    response.json(user);
   })
   .catch(error => {
-    res.json(error);
+    response.json(error);
   });
 })
 
 // Get single user
-app.get('/user/:id', ({params}, res) => {
+app.get('/user/:id', ({params}, response) => {
   db.User.findOne({ _id: params.id })
   .populate([
       { path: 'thoughts', select: "-__v" }, // TODO
@@ -47,16 +47,46 @@ app.get('/user/:id', ({params}, res) => {
   .select('-__v')
   .then(user => {
       if (!user) {
-          res.json({message: 'Sorry, no user found.'});
+          response.json({message: 'Sorry, no user found.'});
           return;
       }
-      res.json(user);
+      response.json(user);
   })
   .catch(error => {
-      res.json(error);
+      response.json(error);
   });
 })
 
+app.put('/user/:id', ({ params, body }, response) => {
+  db.User.findOneAndUpdate({ _id: params.id }, body, { new: true })
+    .then((note) => {
+      if (!note) {
+        response.json({ message: 'Sorry, no note was found.' });
+      }
+      response.json(note);
+    })
+    .catch((error) => {
+      response.json(error);
+    });
+});
+
+// Delete user by its id
+app.delete('/user/:id', ({ params }, response) => {
+  db.User.findOneAndDelete({ _id: params.id })
+    .then((note) => {
+      if (!note) {
+        response.json({ message: 'Sorry, no note was found.' });
+      }
+      response.json(note);
+    })
+    .catch((error) => {
+      response.json(error);
+    });
+});
+
+
+
+// ********************************* DELETE LATER *********************************
 // A user has been created already for our activity purposes
 // db.User.create({ name: 'Ernest Hemingway' })
 //   .then(dbUser => {
@@ -67,42 +97,42 @@ app.get('/user/:id', ({params}, res) => {
 //   });
 
 // Retrieve all notes
-// app.get('/notes', (req, res) => {
+// app.get('/notes', (request, response) => {
 //   db.Note.find({})
-//     .then(dbNote => {
-//       res.json(dbNote);
+//     .then(note => {
+//       response.json(note);
 //     })
 //     .catch(err => {
-//       res.json(err);
+//       response.json(err);
 //     });
 // });
 
 // Retrieve all users
-// app.get('/user', (req, res) => {
+// app.get('/user', (request, response) => {
 //   db.User.find({})
 //     .then(dbUser => {
-//       res.json(dbUser);
+//       response.json(dbUser);
 //     })
 //     .catch(err => {
-//       res.json(err);
+//       response.json(err);
 //     });
 // });
 
 // Create a new note and associate it with user
-// app.post('/submit', ({ body }, res) => {
+// app.post('/submit', ({ body }, response) => {
 //   db.Note.create(body)
 //     .then(({ _id }) =>
 //       db.User.findOneAndUpdate({}, { $push: { notes: _id } }, { new: true })
 //     )
 //     .then(dbUser => {
-//       res.json(dbUser);
+//       response.json(dbUser);
 //     })
 //     .catch(err => {
-//       res.json(err);
+//       response.json(err);
 //     });
 // });
 
-// app.get('/populate', (req, res) => {
+// app.get('/populate', (request, response) => {
 //   db.User.find({})
 //     .populate({
 //       path: 'notes',
@@ -110,12 +140,13 @@ app.get('/user/:id', ({params}, res) => {
 //     })
 //     .select('-__v')
 //     .then(dbUser => {
-//       res.json(dbUser);
+//       response.json(dbUser);
 //     })
 //     .catch(err => {
-//       res.json(err);
+//       response.json(err);
 //     });
 // });
+// ************************************************************
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
