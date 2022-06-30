@@ -23,7 +23,10 @@ mongoose.set('debug', true);
 app.post('/user', ({ body }, response) => {
   db.User.create(body)
   .then(user => response.json(user))
-  .catch(error => response.json(error));
+  .catch(error => { 
+    console.log(error);
+    response.json(error);
+  });
 });
 
 // Get all users
@@ -82,6 +85,45 @@ app.delete('/user/:id', ({ params }, response) => {
     .catch((error) => {
       response.json(error);
     });
+});
+
+
+// TODO Test this
+// Add a friend
+app.post('/user/:uID/friends/:fID', ({ body }, response) => {
+  User.findOneAndUpdate(
+    { _id: params.uID },
+    { $addToSet: { friends: params.fID } } // TODO
+  )
+  .then(user => {
+      if (!user) {
+        response.json({ message: 'Sorry, no user was found.' });
+        return;
+      }
+      response.json(user);
+  })
+  .catch((error) => {
+    response.json(error);
+  });
+});
+
+// TODO 
+// Add a friend
+app.delete('/user/:uID/friends/:fID', ({ body }, response) => {
+  User.findOneAndUpdate(
+    { _id: params.uID },
+    { $pull: { friends: params.fID } }, // TODO
+  )
+  .then(user => {
+      if (!user) {
+        response.json({ message: 'Sorry, no user was found.' });
+        return;
+      }
+      response.json(user);
+  })
+  .catch((error) => {
+    response.json(error);
+  });
 });
 
 
