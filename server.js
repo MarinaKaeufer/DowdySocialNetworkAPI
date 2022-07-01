@@ -87,16 +87,6 @@ app.delete('/user/:id', ({ params }, response) => {
     });
 });
 
-// {
-// 	"username": "Checo",
-// 	"email": "checofan@gmail.com",
-// 	"thoughts": [],
-// 	"friends": [],
-// 	"_id": "62be4a7f75a0c26182cbc270",
-// 	"__v": 0
-// }
-
-// TODO Test this
 // Add a friend
 app.post('/user/:uID/friends/:fID', ({ params }, response) => {
   db.User.findOneAndUpdate(
@@ -116,12 +106,12 @@ app.post('/user/:uID/friends/:fID', ({ params }, response) => {
   });
 });
 
-// TODO 
-// Add a friend
-app.delete('/user/:uID/friends/:fID', ({ body }, response) => {
-  User.findOneAndUpdate(
+// Delete a friend
+app.delete('/user/:uID/friends/:fID', ({ params }, response) => {
+  db.User.findOneAndUpdate(
     { _id: params.uID },
     { $pull: { friends: params.fID } }, // TODO
+    { new: true }
   )
   .then(user => {
       if (!user) {
@@ -129,6 +119,130 @@ app.delete('/user/:uID/friends/:fID', ({ body }, response) => {
         return;
       }
       response.json(user);
+  })
+  .catch((error) => {
+    response.json(error);
+  });
+});
+
+
+// ========================= Thought End Point ================================
+// Create new thought
+app.post('/thought', ({ body }, response) => {
+  db.Thought.create(body)
+  .then(thought => { 
+    db.User.findOneAndUpdate(
+      { username: body.username },
+      { $push: { thoughts: thought._id } },
+      { new: true }
+    )
+    .then(user => {
+        if (!user) {
+            response.json({ message: 'Sorry, no user was found.'});
+            return;
+        }
+        response.json(user);
+    })
+    .catch(error => { 
+      response.json(error);
+    });
+  })
+  .catch(error => { 
+    response.json(error);
+  });
+});
+
+
+// Get all thoughts
+app.get('/thought', (request, response) => {
+  db.Thought.find({})
+  .then(thought => {
+    response.json(thought);
+  })
+  .catch(error => {
+    response.json(error);
+  });
+})
+
+// Get single thought
+app.get('/thought/:id', ({params}, response) => {
+  db.Thought.findOne({ _id: params.id })
+  .populate([
+      { path: 'reactions', select: "-__v" }// TODO
+  ])
+  .select('-__v')
+  .then(thought => {
+      if (!thought) {
+          response.json({message: 'Sorry, no thought was found.'});
+          return;
+      }
+      response.json(thought);
+  })
+  .catch(error => {
+      response.json(error);
+  });
+})
+
+app.put('/thought/:id', ({ params, body }, response) => {
+  db.Thought.findOneAndUpdate({ _id: params.id }, body, { new: true })
+    .then((note) => {
+      if (!note) {
+        response.json({ message: 'Sorry, no note was found.' });
+      }
+      response.json(note);
+    })
+    .catch((error) => {
+      response.json(error);
+    });
+});
+
+// Delete thought by its id
+app.delete('/thought/:id', ({ params }, response) => {
+  db.Thought.findOneAndDelete({ _id: params.id })
+    .then((note) => {
+      if (!note) {
+        response.json({ message: 'Sorry, no note was found.' });
+      }
+      response.json(note);
+    })
+    .catch((error) => {
+      response.json(error);
+    });
+});
+
+// TODO
+// Add a reaction to a thought
+app.post('/thought/:thoughtId/reactions', ({ body, params }, response) => {
+  db.Thought.findOneAndUpdate(
+    { _id: params.thoughtId },
+    { $addToSet: { reactions: body } }, // TODO
+    { new: true } // TODO
+  )
+  .then(thought => {
+      if (!thought) {
+        response.json({ message: 'Sorry, no thought was found.' });
+        return;
+      }
+      response.json(thought);
+  })
+  .catch((error) => {
+    response.json(error);
+  });
+});
+
+// Delete a reaction to a thought
+app.delete('/thought/:thoughtId/reactions', ({ body, params }, response) => {
+  db.Thought.findOneAndUpdate(
+    { _id: params.uID },
+    { $pull: { reactions: body.reactionId } }, // TODO
+    { new: true }
+  )
+  .then(thought => {
+      if (!thought) {
+        response.json({ message: 'Sorry, no thought was found.' });
+        return;
+      }
+      response.json(thought);
   })
   .catch((error) => {
     response.json(error);
