@@ -44,7 +44,7 @@ app.get('/user', (request, response) => {
 app.get('/user/:id', ({params}, response) => {
   db.User.findOne({ _id: params.id })
   .populate([
-      { path: 'thoughts', select: "-__v" }, // TODO
+      { path: 'thoughts', select: "-__v" }, 
       { path: 'friends', select: "-__v" }
   ])
   .select('-__v')
@@ -91,8 +91,8 @@ app.delete('/user/:id', ({ params }, response) => {
 app.post('/user/:uID/friends/:fID', ({ params }, response) => {
   db.User.findOneAndUpdate(
     { _id: params.uID },
-    { $addToSet: { friends: params.fID } }, // TODO
-    { new: true, runValidators: true } // TODO
+    { $addToSet: { friends: params.fID } }, 
+    { new: true }
   )
   .then(user => {
       if (!user) {
@@ -110,7 +110,7 @@ app.post('/user/:uID/friends/:fID', ({ params }, response) => {
 app.delete('/user/:uID/friends/:fID', ({ params }, response) => {
   db.User.findOneAndUpdate(
     { _id: params.uID },
-    { $pull: { friends: params.fID } }, // TODO
+    { $pull: { friends: params.fID } }, 
     { new: true }
   )
   .then(user => {
@@ -168,7 +168,7 @@ app.get('/thought', (request, response) => {
 app.get('/thought/:id', ({params}, response) => {
   db.Thought.findOne({ _id: params.id })
   .populate([
-      { path: 'reactions', select: "-__v" }// TODO
+      { path: 'reactions', select: "-__v" }
   ])
   .select('-__v')
   .then(thought => {
@@ -210,13 +210,12 @@ app.delete('/thought/:id', ({ params }, response) => {
     });
 });
 
-// TODO
 // Add a reaction to a thought
 app.post('/thought/:thoughtId/reactions', ({ body, params }, response) => {
   db.Thought.findOneAndUpdate(
     { _id: params.thoughtId },
-    { $addToSet: { reactions: body } }, // TODO
-    { new: true } // TODO
+    { $addToSet: { reactions: body } }, 
+    { new: true } 
   )
   .then(thought => {
       if (!thought) {
@@ -234,7 +233,7 @@ app.post('/thought/:thoughtId/reactions', ({ body, params }, response) => {
 app.delete('/thought/:thoughtId/reactions', ({ body, params }, response) => {
   db.Thought.findOneAndUpdate(
     { _id: params.thoughtId },
-    { $pull: { reactions: { reactionId: body.reactionId } } }, // TODO
+    { $pull: { reactions: { reactionId: body.reactionId } } },
     { new: true }
   )
   .then(thought => {

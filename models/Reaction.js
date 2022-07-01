@@ -9,7 +9,7 @@ const ReactionSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        get: (time) => moment(time).format('MMM DD, YYYY [at] hh:mm a') // TODO Find a better format
+        get: (time) => moment(time).format('YYYY-MM-DD HH:mm:ss') 
     },
     body: {
         type: String,
