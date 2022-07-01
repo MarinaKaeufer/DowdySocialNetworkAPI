@@ -87,13 +87,22 @@ app.delete('/user/:id', ({ params }, response) => {
     });
 });
 
+// {
+// 	"username": "Checo",
+// 	"email": "checofan@gmail.com",
+// 	"thoughts": [],
+// 	"friends": [],
+// 	"_id": "62be4a7f75a0c26182cbc270",
+// 	"__v": 0
+// }
 
 // TODO Test this
 // Add a friend
-app.post('/user/:uID/friends/:fID', ({ body }, response) => {
-  User.findOneAndUpdate(
+app.post('/user/:uID/friends/:fID', ({ params }, response) => {
+  db.User.findOneAndUpdate(
     { _id: params.uID },
-    { $addToSet: { friends: params.fID } } // TODO
+    { $addToSet: { friends: params.fID } }, // TODO
+    { new: true, runValidators: true } // TODO
   )
   .then(user => {
       if (!user) {
