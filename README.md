@@ -12,9 +12,12 @@ Given a social network API
 * When I test API POST and DELETE routes in Insomnia, then I am able to successfully create and delete reactions to thoughts and add and remove friends to a user’s friend list
 
 
-## Deployed application URL:
+## Walkthrough video:
 
-https://marinakaeufer.github.io/LimerenceWeatherDashboard/
+Video 1: https://drive.google.com/file/d/1V2dFLmSzwuBPYn7AMqVHYXhSgJ9HPIr-/view
+
+Video 2: https://drive.google.com/file/d/1-Hc45VUOs40Yvqm7aPCi43bpQXAqkRRM/view
+
 
 ## Contribution
 
@@ -22,7 +25,7 @@ Marina Kaeufer
 
 ## GitHub
 
-https://github.com/MarinaKaeufer/LimerenceWeatherDashboard
+https://github.com/MarinaKaeufer/DowdySocialNetworkAPI
 
 ## Questions 
 
